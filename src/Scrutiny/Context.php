@@ -9,12 +9,18 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Scrutiny;
 
+use Closure;
 use DecodeLabs\Dovetail;
 use DecodeLabs\Dovetail\Config\Scrutiny as ScrutinyConfig;
 use DecodeLabs\Exceptional;
 use DecodeLabs\Scrutiny;
+use DecodeLabs\Scrutiny\Renderer\Custom as CustomRenderer;
+use DecodeLabs\Scrutiny\Renderer\Generic as GenericRenderer;
 use DecodeLabs\Slingshot;
+use DecodeLabs\Tagged\Element;
+use DecodeLabs\Tagged\Markup;
 use DecodeLabs\Veneer;
+use ReflectionClass;
 
 class Context
 {
@@ -24,6 +30,11 @@ class Context
     protected array $hostNames = [];
 
     protected ?Config $config = null;
+
+    /**
+     * @var array<string, Renderer>
+     */
+    protected array $renderers = [];
 
     /**
      * Set config
@@ -52,49 +63,132 @@ class Context
     /**
      * Load verifier
      *
-     * @param array<string, mixed> $config
+     * @param array<string, mixed> $settings
      */
     public function loadVerifier(
-        string $name,
-        ?array $config = null
+        ?string $name = null,
+        ?array $settings = null
     ): Verifier {
-        if ($config === null) {
-            $config = $this->getConfig()?->getSettingsFor($name) ?? [];
-        }
-
-        if (
-            isset($config['enabled']) &&
-            $config['enabled'] === false
-        ) {
+        if (!$verifier = $this->tryLoadVerifier($name, $settings)) {
             throw Exceptional::NotFound(
                 'Verifier ' . $name . ' is not enabled'
             );
         }
 
-        return (new Slingshot())
-            ->addType($this)
-            ->resolveNamedInstance(Verifier::class, $name, $config);
+        return $verifier;
     }
 
     /**
-     * Load default verifier
+     * Try load verifier
+     *
+     * @param array<string, mixed> $settings
      */
-    public function loadDefaultVerifier(): Verifier
-    {
+    public function tryLoadVerifier(
+        ?string $name = null,
+        ?array $settings = null
+    ): ?Verifier {
         $config = $this->getConfig();
-        $name = $config?->getFirstEnabledVerifier();
 
         if ($name === null) {
-            throw Exceptional::NotFound(
-                'No verifiers are enabled'
-            );
+            $name = $config?->getFirstEnabledVerifier();
+
+            if ($name === null) {
+                return null;
+            }
         }
 
-        return $this->loadVerifier(
-            $name,
-            $config?->getSettingsFor($name) ?? []
-        );
+        if ($settings === null) {
+            $settings = $config?->getSettingsFor($name) ?? [];
+        }
+
+        if (
+            isset($settings['enabled']) &&
+            $settings['enabled'] === false
+        ) {
+            return null;
+        }
+
+        return (new Slingshot())
+            ->addType($this)
+            ->resolveNamedInstance(Verifier::class, $name, $settings);
     }
+
+
+    /**
+     * Render inline
+     */
+    public function renderInline(
+        ?string $verifierName = null,
+        ?string $nonce = null
+    ): ?Markup {
+        return $this->tryLoadVerifier($verifierName)
+            ?->renderInline($nonce);
+    }
+
+    /**
+     * Render component
+     */
+    public function render(
+        ?string $verifierName = null
+    ): ?Element {
+        if (!$verifier = $this->tryLoadVerifier($verifierName)) {
+            return null;
+        }
+
+        $verifierName = (new ReflectionClass($verifier))->getShortName();
+        return $this->getRenderer($verifierName)->render($verifier);
+    }
+
+    /**
+     * Register renderer
+     */
+    public function registerRenderer(
+        string $verifierName,
+        Renderer $renderer
+    ): void {
+        $this->renderers[$verifierName] = $renderer;
+    }
+
+    /**
+     * Register custom renderer
+     */
+    public function registerCustomRenderer(
+        string $verifierName,
+        Closure $renderer,
+    ): void {
+        $this->registerRenderer($verifierName, new CustomRenderer($renderer));
+    }
+
+    /**
+     * Register default renderer
+     */
+    public function registerDefaultRenderer(
+        Renderer $renderer
+    ): void {
+        $this->registerRenderer('Default', $renderer);
+    }
+
+    /**
+     * Get renderer
+     */
+    public function getRenderer(
+        string $verifierName
+    ): Renderer {
+        return
+            $this->renderers[$verifierName] ??
+            $this->renderers['Default'] ??
+            new GenericRenderer();
+    }
+
+    /**
+     * Remove renderer
+     */
+    public function removeRenderer(
+        string $verifierName
+    ): void {
+        unset($this->renderers[$verifierName]);
+    }
+
 
     /**
      * Create payload and verify
@@ -127,13 +221,7 @@ class Context
     ): Result {
         $name = $payload->getVerifierName();
 
-        try {
-            if ($name === null) {
-                $verifier = $this->loadDefaultVerifier();
-            } else {
-                $verifier = $this->loadVerifier($name);
-            }
-        } catch (NotFoundException $e) {
+        if (!$verifier = $this->tryLoadVerifier($name)) {
             return new Result(
                 payload: $payload,
                 errors: [

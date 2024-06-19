@@ -16,13 +16,15 @@ use DecodeLabs\Scrutiny\Payload;
 use DecodeLabs\Scrutiny\Response;
 use DecodeLabs\Scrutiny\Result;
 use DecodeLabs\Scrutiny\Verifier;
+use DecodeLabs\Tagged;
+use DecodeLabs\Tagged\Markup;
 use SensitiveParameter;
 
 abstract class SiteVerify implements Verifier
 {
     public const VERIFY_URL = 'https://example.com/api/siteverify';
     public const API_URL = 'https://example.com/api.js';
-    public const CLIENT_FIELD_NAME = 'captcha';
+    public const CLIENT_KEY_NAME = 'captcha';
     public const RESPONSE_FIELD_NAME = 'captcha-response';
 
     protected string $siteKey;
@@ -40,6 +42,48 @@ abstract class SiteVerify implements Verifier
     ) {
         $this->siteKey = $siteKey;
         $this->secret = $secret;
+    }
+
+    /**
+     * Get site key
+     */
+    public function getSiteKey(): string
+    {
+        return $this->siteKey;
+    }
+
+    /**
+     * Render inline
+     */
+    public function renderInline(
+        ?string $nonce = null
+    ): Markup {
+        return Tagged::wrap(function () use ($nonce) {
+            $script = Tagged::script(null, [
+                'src' => static::API_URL
+            ]);
+
+            if ($nonce !== null) {
+                $script->setAttribute('nonce', $nonce);
+            }
+
+            yield $script;
+
+            yield Tagged::div(null, [
+                'class' => static::CLIENT_KEY_NAME,
+                'data-sitekey' => $this->siteKey,
+            ]);
+        });
+    }
+
+    /**
+     * Get component data
+     */
+    public function getComponentData(): array
+    {
+        return [
+            'siteKey' => $this->siteKey
+        ];
     }
 
     /**

@@ -16,7 +16,7 @@ class HCaptcha extends SiteVerify
 {
     public const VERIFY_URL = 'https://api.hcaptcha.com/siteverify';
     public const API_URL = 'https://hcaptcha.com/1/api.js';
-    public const CLIENT_FIELD_NAME = 'h-captcha';
+    public const CLIENT_KEY_NAME = 'h-captcha';
     public const RESPONSE_FIELD_NAME = 'h-captcha-response';
 
     protected function createResponse(

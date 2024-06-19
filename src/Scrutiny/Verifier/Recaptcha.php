@@ -16,7 +16,7 @@ class Recaptcha extends SiteVerify
 {
     public const VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
     public const API_URL = 'https://www.google.com/recaptcha/api.js';
-    public const CLIENT_FIELD_NAME = 'g-recaptcha';
+    public const CLIENT_KEY_NAME = 'g-recaptcha';
     public const RESPONSE_FIELD_NAME = 'g-recaptcha-response';
 
     protected function createResponse(
