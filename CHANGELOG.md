@@ -1,3 +1,4 @@
+## v0.2.0 (2024-06-20)
 * Added getInlineViewAssets() to Verifier
 * Improved inline rendering
 * Added getName() to Verifier
