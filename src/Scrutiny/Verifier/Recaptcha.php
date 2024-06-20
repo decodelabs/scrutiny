@@ -19,6 +19,11 @@ class Recaptcha extends SiteVerify
     public const CLIENT_KEY_NAME = 'g-recaptcha';
     public const RESPONSE_FIELD_NAME = 'g-recaptcha-response';
 
+    public function getName(): string
+    {
+        return 'Recaptcha';
+    }
+
     protected function createResponse(
         array $data
     ): Response {
