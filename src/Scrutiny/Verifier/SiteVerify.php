@@ -16,8 +16,9 @@ use DecodeLabs\Scrutiny\Payload;
 use DecodeLabs\Scrutiny\Response;
 use DecodeLabs\Scrutiny\Result;
 use DecodeLabs\Scrutiny\Verifier;
-use DecodeLabs\Tagged;
-use DecodeLabs\Tagged\Markup;
+use DecodeLabs\Tagged\Asset\RemoteScript;
+use DecodeLabs\Tagged\Element;
+use DecodeLabs\Tagged\ViewAssetContainer;
 use SensitiveParameter;
 
 abstract class SiteVerify implements Verifier
@@ -53,27 +54,38 @@ abstract class SiteVerify implements Verifier
     }
 
     /**
-     * Render inline
+     * @return array<string>
      */
-    public function renderInline(
+    public function getDataKeys(): array
+    {
+        return [static::RESPONSE_FIELD_NAME];
+    }
+
+
+    /**
+     * Get assets for inline render
+     */
+    public function getInlineViewAssets(
         ?string $nonce = null
-    ): Markup {
-        return Tagged::wrap(function () use ($nonce) {
-            $script = Tagged::script(null, [
-                'src' => static::API_URL
-            ]);
+    ): ViewAssetContainer {
+        $output = new ViewAssetContainer();
 
-            if ($nonce !== null) {
-                $script->setAttribute('nonce', $nonce);
-            }
+        $output->addHeadJs(new RemoteScript(
+            priority: 10,
+            src: static::API_URL,
+            attributes: [
+                'nonce' => $nonce,
+                'async' => true,
+                'defer' => true
+            ]
+        ));
 
-            yield $script;
+        $output->setContent(new Element('div', null, [
+            'class' => static::CLIENT_KEY_NAME,
+            'data-sitekey' => $this->siteKey
+        ]));
 
-            yield Tagged::div(null, [
-                'class' => static::CLIENT_KEY_NAME,
-                'data-sitekey' => $this->siteKey,
-            ]);
-        });
+        return $output;
     }
 
     /**

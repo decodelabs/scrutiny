@@ -121,8 +121,12 @@ class Context
         ?string $verifierName = null,
         ?string $nonce = null
     ): ?Markup {
-        return $this->tryLoadVerifier($verifierName)
-            ?->renderInline($nonce);
+        if (!$verifier = $this->tryLoadVerifier($verifierName)) {
+            return null;
+        }
+
+        $assets = $verifier->getInlineViewAssets($nonce);
+        return $assets->renderInline();
     }
 
     /**

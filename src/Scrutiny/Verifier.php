@@ -9,13 +9,20 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Scrutiny;
 
-use DecodeLabs\Tagged\Markup;
+use DecodeLabs\Tagged\ViewAssetContainer;
 
 interface Verifier
 {
-    public function renderInline(
+    public function getName(): string;
+
+    /**
+     * @return array<string>
+     */
+    public function getDataKeys(): array;
+
+    public function getInlineViewAssets(
         ?string $nonce = null
-    ): Markup;
+    ): ViewAssetContainer;
 
     /**
      * @return array<string, mixed>

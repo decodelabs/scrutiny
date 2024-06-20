@@ -19,6 +19,11 @@ class HCaptcha extends SiteVerify
     public const CLIENT_KEY_NAME = 'h-captcha';
     public const RESPONSE_FIELD_NAME = 'h-captcha-response';
 
+    public function getName(): string
+    {
+        return 'HCaptcha';
+    }
+
     protected function createResponse(
         array $data
     ): Response {
