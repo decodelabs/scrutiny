@@ -1,3 +1,4 @@
+## v0.2.1 (2024-06-24)
 * Added Compound Verifier
 
 ## v0.2.0 (2024-06-20)
