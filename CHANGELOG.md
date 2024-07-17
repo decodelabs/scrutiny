@@ -1,3 +1,5 @@
+* Updated Veneer dependency
+
 ## v0.2.1 (2024-06-24)
 * Added Compound Verifier
 
