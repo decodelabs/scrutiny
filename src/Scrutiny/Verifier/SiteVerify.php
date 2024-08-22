@@ -23,10 +23,10 @@ use SensitiveParameter;
 
 abstract class SiteVerify implements Verifier
 {
-    public const VERIFY_URL = 'https://example.com/api/siteverify';
-    public const API_URL = 'https://example.com/api.js';
-    public const CLIENT_KEY_NAME = 'captcha';
-    public const RESPONSE_FIELD_NAME = 'captcha-response';
+    protected const VerifyUrl = 'https://example.com/api/siteverify';
+    protected const ApiUrl = 'https://example.com/api.js';
+    protected const ClientKeyName = 'captcha';
+    protected const ResponseFieldName = 'captcha-response';
 
     protected string $siteKey;
 
@@ -58,7 +58,7 @@ abstract class SiteVerify implements Verifier
      */
     public function getDataKeys(): array
     {
-        return [static::RESPONSE_FIELD_NAME];
+        return [static::ResponseFieldName];
     }
 
 
@@ -72,7 +72,7 @@ abstract class SiteVerify implements Verifier
 
         $output->addHeadJs(new RemoteScript(
             priority: 10,
-            src: static::API_URL,
+            src: static::ApiUrl,
             attributes: [
                 'nonce' => $nonce,
                 'async' => true,
@@ -81,7 +81,7 @@ abstract class SiteVerify implements Verifier
         ));
 
         $output->setContent(new Element('div', null, [
-            'class' => static::CLIENT_KEY_NAME,
+            'class' => static::ClientKeyName,
             'data-sitekey' => $this->siteKey
         ]));
 
@@ -105,7 +105,7 @@ abstract class SiteVerify implements Verifier
         Payload $payload
     ): Result {
         $ip = $payload->getIp();
-        $key = static::RESPONSE_FIELD_NAME;
+        $key = static::ResponseFieldName;
         $value = $payload->getValue($key);
 
         if ($value === null) {
@@ -118,7 +118,7 @@ abstract class SiteVerify implements Verifier
         }
 
         $httpResponse = Hydro::request('POST', [
-            'url' => static::VERIFY_URL,
+            'url' => static::VerifyUrl,
             'form_params' => [
                 'secret' => $this->secret,
                 'response' => $value,

@@ -21,8 +21,8 @@ class Scrutiny implements Proxy
 {
     use ProxyTrait;
 
-    const VENEER = 'DecodeLabs\\Scrutiny';
-    const VENEER_TARGET = Inst::class;
+    const Veneer = 'DecodeLabs\\Scrutiny';
+    const VeneerTarget = Inst::class;
 
     public static Inst $instance;
 

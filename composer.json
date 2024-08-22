@@ -13,14 +13,14 @@
 
         "decodelabs/archetype": "^0.3.5",
         "decodelabs/coercion": "^0.2.8",
-        "decodelabs/compass": "^0.1.7",
+        "decodelabs/compass": "^0.2",
         "decodelabs/dictum": "^0.6.2",
         "decodelabs/exceptional": "^0.4.5",
         "decodelabs/glitch-support": "^0.4.6",
         "decodelabs/hydro": "^0.1.3",
         "decodelabs/slingshot": "^0.1.9",
         "decodelabs/tagged": "^0.15.0",
-        "decodelabs/veneer": "^0.11.1",
+        "decodelabs/veneer": "^0.11.6",
 
         "symfony/polyfill-php82": "^1.29"
     },
