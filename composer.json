@@ -13,7 +13,7 @@
 
         "decodelabs/archetype": "^0.3.5",
         "decodelabs/coercion": "^0.2.8",
-        "decodelabs/compass": "^0.1.7",
+        "decodelabs/compass": "^0.2",
         "decodelabs/dictum": "^0.6.2",
         "decodelabs/exceptional": "^0.4.5",
         "decodelabs/glitch-support": "^0.4.6",
