@@ -19,13 +19,44 @@ use DecodeLabs\Tagged\ViewAssetContainer;
 
 class Compound implements Verifier
 {
+    public string $name { get => 'Compound'; }
+
+    public array $dataKeys {
+        get {
+            $output = [];
+
+            foreach ($this->verifiers as $verifier) {
+                $output = array_merge($output, $verifier->dataKeys);
+            }
+
+            return $output;
+        }
+    }
+
+    public array $componentData {
+        get {
+            $output = [];
+
+            foreach ($this->verifiers as $verifier) {
+                $slug = Dictum::slug($verifier->name);
+
+                foreach ($verifier->componentData as $key => $value) {
+                    $attr = str_replace(ltrim($key, ':@'), $slug . '-' . $key, $key);
+                    $output[$attr] = $value;
+                }
+            }
+
+            return $output;
+        }
+    }
+
     /**
-     * @var array<Verifier>
+     * @var list<Verifier>
      */
     protected array $verifiers;
 
     /**
-     * @param array<string|Verifier> $verifiers
+     * @param list<string|Verifier> $verifiers
      */
     public function __construct(
         array $verifiers,
@@ -44,53 +75,21 @@ class Compound implements Verifier
         }
     }
 
-    public function getName(): string
-    {
-        return 'Compound';
-    }
-
-    public function getDataKeys(): array
-    {
-        $output = [];
-
-        foreach ($this->verifiers as $verifier) {
-            $output = array_merge($output, $verifier->getDataKeys());
-        }
-
-        return $output;
-    }
-
-    public function getComponentData(): array
-    {
-        $output = [];
-
-        foreach ($this->verifiers as $verifier) {
-            $slug = Dictum::slug($verifier->getName());
-
-            foreach ($verifier->getComponentData() as $key => $value) {
-                $attr = str_replace(ltrim($key, ':@'), $slug . '-' . $key, $key);
-                $output[$attr] = $value;
-            }
-        }
-
-        return $output;
-    }
-
-    public function getInlineViewAssets(
+    public function prepareInlineViewAssets(
         ?string $nonce = null
     ): ViewAssetContainer {
         if (!isset($this->verifiers[0])) {
             return new ViewAssetContainer();
         }
 
-        return $this->verifiers[0]->getInlineViewAssets($nonce);
+        return $this->verifiers[0]->prepareInlineViewAssets($nonce);
     }
 
     public function verify(
         Payload $payload
     ): Result {
         foreach ($this->verifiers as $verifier) {
-            $keys = $verifier->getDataKeys();
+            $keys = $verifier->dataKeys;
 
             foreach ($keys as $key) {
                 if (null === ($value = $payload->getValue($key))) {

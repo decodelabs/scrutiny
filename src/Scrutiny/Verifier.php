@@ -13,21 +13,21 @@ use DecodeLabs\Tagged\ViewAssetContainer;
 
 interface Verifier
 {
-    public function getName(): string;
+    public string $name { get; }
 
     /**
-     * @return array<string>
+     * @var list<string>
      */
-    public function getDataKeys(): array;
+    public array $dataKeys { get; }
 
-    public function getInlineViewAssets(
+    /**
+     * @var array<string,mixed>
+     */
+    public array $componentData { get; }
+
+    public function prepareInlineViewAssets(
         ?string $nonce = null
     ): ViewAssetContainer;
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getComponentData(): array;
 
     public function verify(
         Payload $payload

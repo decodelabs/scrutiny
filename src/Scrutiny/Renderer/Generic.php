@@ -12,7 +12,6 @@ namespace DecodeLabs\Scrutiny\Renderer;
 use DecodeLabs\Dictum;
 use DecodeLabs\Scrutiny\Renderer;
 use DecodeLabs\Scrutiny\Verifier;
-use DecodeLabs\Tagged;
 use DecodeLabs\Tagged\Element;
 use ReflectionClass;
 
@@ -22,15 +21,16 @@ class Generic implements Renderer
         Verifier $verifier
     ): Element {
         $name = strtolower(
-            (new ReflectionClass($verifier))->getShortName()
+            new ReflectionClass($verifier)
+                ->getShortName()
         );
 
         $attributes = [];
 
-        foreach ($verifier->getComponentData() as $key => $value) {
+        foreach ($verifier->componentData as $key => $value) {
             $attributes[Dictum::slug($key)] = $value;
         }
 
-        return Tagged::{'scrutiny-' . $name}(null, $attributes);
+        return Element::create('scrutiny-' . $name, null, $attributes);
     }
 }

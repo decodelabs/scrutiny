@@ -71,7 +71,7 @@ class Context
     ): Verifier {
         if (!$verifier = $this->tryLoadVerifier($name, $settings)) {
             throw Exceptional::NotFound(
-                'Verifier ' . $name . ' is not enabled'
+                message: 'Verifier ' . $name . ' is not enabled'
             );
         }
 
@@ -125,7 +125,7 @@ class Context
             return null;
         }
 
-        $assets = $verifier->getInlineViewAssets($nonce);
+        $assets = $verifier->prepareInlineViewAssets($nonce);
         return $assets->renderInline();
     }
 
@@ -223,7 +223,7 @@ class Context
     public function verifyPayload(
         Payload $payload
     ): Result {
-        $name = $payload->getVerifierName();
+        $name = $payload->verifierName;
 
         if (!$verifier = $this->tryLoadVerifier($name)) {
             return new Result(
@@ -315,4 +315,7 @@ class Context
 }
 
 // Register the Veneer facade
-Veneer::register(Context::class, Scrutiny::class);
+Veneer\Manager::getGlobalManager()->register(
+    Context::class,
+    Scrutiny::class
+);

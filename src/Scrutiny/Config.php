@@ -14,7 +14,7 @@ interface Config
     public function getFirstEnabledVerifier(): ?string;
 
     /**
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     public function getSettingsFor(
         string $verifierName

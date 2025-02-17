@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Scrutiny\Verifier;
 
+use DecodeLabs\Coercion;
 use DecodeLabs\Glitch\Attribute\SensitiveProperty;
 use DecodeLabs\Hydro;
 use DecodeLabs\Scrutiny\Error;
@@ -23,12 +24,20 @@ use SensitiveParameter;
 
 abstract class SiteVerify implements Verifier
 {
-    protected const VerifyUrl = 'https://example.com/api/siteverify';
-    protected const ApiUrl = 'https://example.com/api.js';
-    protected const ClientKeyName = 'captcha';
-    protected const ResponseFieldName = 'captcha-response';
+    protected const string VerifyUrl = 'https://example.com/api/siteverify';
+    protected const string ApiUrl = 'https://example.com/api.js';
+    protected const string ClientKeyName = 'captcha';
+    protected const string ResponseFieldName = 'captcha-response';
 
-    protected string $siteKey;
+    public array $dataKeys { get => [static::ResponseFieldName]; }
+
+    public array $componentData {
+        get => [
+            'siteKey' => $this->siteKey
+        ];
+    }
+
+    protected(set) string $siteKey;
 
     #[SensitiveProperty]
     protected string $secret;
@@ -46,26 +55,9 @@ abstract class SiteVerify implements Verifier
     }
 
     /**
-     * Get site key
-     */
-    public function getSiteKey(): string
-    {
-        return $this->siteKey;
-    }
-
-    /**
-     * @return array<string>
-     */
-    public function getDataKeys(): array
-    {
-        return [static::ResponseFieldName];
-    }
-
-
-    /**
      * Get assets for inline render
      */
-    public function getInlineViewAssets(
+    public function prepareInlineViewAssets(
         ?string $nonce = null
     ): ViewAssetContainer {
         $output = new ViewAssetContainer();
@@ -89,22 +81,12 @@ abstract class SiteVerify implements Verifier
     }
 
     /**
-     * Get component data
-     */
-    public function getComponentData(): array
-    {
-        return [
-            'siteKey' => $this->siteKey
-        ];
-    }
-
-    /**
      * Verify payload
      */
     public function verify(
         Payload $payload
     ): Result {
-        $ip = $payload->getIp();
+        $ip = $payload->ip;
         $key = static::ResponseFieldName;
         $value = $payload->getValue($key);
 
@@ -139,12 +121,13 @@ abstract class SiteVerify implements Verifier
             );
         }
 
+        /** @var array<string,mixed> */
         $data = (array)json_decode((string)$httpResponse->getBody(), true);
 
         if (!($data['success'] ?? false)) {
             $errors = [];
 
-            foreach ($data['error-codes'] ?? [] as $code) {
+            foreach (Coercion::toArray($data['error-codes'] ?? []) as $code) {
                 $errors[] = match ($code) {
                     'missing-input-response' => Error::InvalidPayload,
                     'invalid-input-response' => Error::InvalidInput,

@@ -9,31 +9,56 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Scrutiny;
 
+use DecodeLabs\Coercion;
 use DecodeLabs\Compass\Ip;
 use Throwable;
 
 class Payload
 {
-    protected ?Ip $ip = null;
-    protected ?string $verifierName;
+    protected(set) Ip $ip {
+        get {
+            if (!isset($this->ip)) {
+                $this->ip = $this->extrapolateIp();
+            }
+
+            return $this->ip;
+        }
+    }
+
+    protected(set) ?string $verifierName;
 
     /**
-     * @var array<string, mixed>
+     * @var array<string,mixed>
      */
-    protected array $values = [];
+    protected(set) array $values = [];
 
     /**
      * @var array<string>
      */
-    protected array $hostNames = [];
-    protected ?string $action;
-    protected ?float $scoreThreshold = null;
-    protected ?int $timeout = null;
+    protected(set) array $hostNames = [];
+
+    protected(set) ?string $action {
+        get => $this->action ?? 'default';
+    }
+
+    public ?float $scoreThreshold = null {
+        set => min(1, max(0, $value));
+    }
+
+    public ?int $timeout = null {
+        set {
+            if ($value <= 0) {
+                $value = null;
+            }
+
+            $this->timeout = $value;
+        }
+    }
 
     /**
      * Init with values
      *
-     * @param array<string, mixed> $values
+     * @param array<string,mixed> $values
      * @param array<string> $hostNames
      */
     public function __construct(
@@ -50,7 +75,11 @@ class Payload
         }
 
         $this->verifierName = $verifierName;
-        $this->ip = $ip;
+
+        if($ip !== null) {
+            $this->ip = $ip;
+        }
+
         $this->values = $values;
 
         $this->hostNames = $hostNames;
@@ -59,40 +88,20 @@ class Payload
         $this->timeout = $timeout;
     }
 
-    /**
-     * Get verifier name
-     */
-    public function getVerifierName(): ?string
-    {
-        return $this->verifierName;
-    }
-
-    /**
-     * Get IP
-     */
-    public function getIp(): Ip
-    {
-        if ($this->ip === null) {
-            $this->ip = $this->extrapolateIp();
-        }
-
-        return $this->ip;
-    }
-
     protected function extrapolateIp(): Ip
     {
         $ips = '';
 
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips .= $_SERVER['HTTP_X_FORWARDED_FOR'] . ',';
+            $ips .= Coercion::toString($_SERVER['HTTP_X_FORWARDED_FOR']) . ',';
         }
 
         if (isset($_SERVER['REMOTE_ADDR'])) {
-            $ips .= $_SERVER['REMOTE_ADDR'] . ',';
+            $ips .= Coercion::toString($_SERVER['REMOTE_ADDR']) . ',';
         }
 
         if (isset($_SERVER['HTTP_CLIENT_IP'])) {
-            $ips .= $_SERVER['HTTP_CLIENT_IP'] . ',';
+            $ips .= Coercion::toString($_SERVER['HTTP_CLIENT_IP']) . ',';
         }
 
         $parts = explode(',', rtrim($ips, ','));
@@ -120,28 +129,6 @@ class Payload
     }
 
     /**
-     * Get all values
-     *
-     * @return array<string, mixed>
-     */
-    public function getValues(): array
-    {
-        return $this->values;
-    }
-
-
-
-    /**
-     * Get host names
-     *
-     * @return array<string>
-     */
-    public function getHostNames(): array
-    {
-        return $this->hostNames;
-    }
-
-    /**
      * Has host names
      */
     public function hasHostNames(): bool
@@ -166,14 +153,6 @@ class Payload
     }
 
     /**
-     * Get action
-     */
-    public function getAction(): string
-    {
-        return $this->action ?? 'default';
-    }
-
-    /**
      * Validate action
      */
     public function validateAction(
@@ -190,27 +169,6 @@ class Payload
     }
 
     /**
-     * Set timeout
-     */
-    public function setTimeout(
-        ?int $timeout
-    ): void {
-        if ($timeout <= 0) {
-            $timeout = null;
-        }
-
-        $this->timeout = $timeout;
-    }
-
-    /**
-     * Get timeout
-     */
-    public function getTimeout(): ?int
-    {
-        return $this->timeout;
-    }
-
-    /**
      * Validate timeout
      */
     public function validateTimeout(
@@ -224,24 +182,6 @@ class Payload
         }
 
         return time() - $timestamp <= $this->timeout;
-    }
-
-
-    /**
-     * Set score threshold
-     */
-    public function setScoreThreshold(
-        ?float $scoreThreshold
-    ): void {
-        $this->scoreThreshold = min(1, max(0, $scoreThreshold));
-    }
-
-    /**
-     * Get score threshold
-     */
-    public function getScoreThreshold(): ?float
-    {
-        return $this->scoreThreshold;
     }
 
     /**
