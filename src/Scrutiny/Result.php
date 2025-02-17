@@ -11,18 +11,18 @@ namespace DecodeLabs\Scrutiny;
 
 class Result
 {
-    protected Payload $payload;
-    protected ?Response $response = null;
+    protected(set) Payload $payload;
+    protected(set) ?Response $response = null;
 
     /**
-     * @var array<Error>
+     * @var list<Error>
      */
-    protected array $errors = [];
+    protected(set) array $errors = [];
 
     /**
      * Init with payload
      *
-     * @param array<Error> $errors
+     * @param list<Error> $errors
      */
     public function __construct(
         Payload $payload,
@@ -35,49 +35,35 @@ class Result
 
         // Host name
         if (false === $this->payload->validateHostName(
-            $this->response?->getHostName()
+            $this->response?->hostName
         )) {
             $this->errors[] = Error::HostNameMismatch;
         }
 
         // Action
         if (false === $this->payload->validateAction(
-            $this->response?->getAction()
+            $this->response?->action
         )) {
             $this->errors[] = Error::ActionMismatch;
         }
 
         // Threshold
         if (false === $this->payload->validateScoreThreshold(
-            $this->response?->getScore()
+            $this->response?->score
         )) {
             $this->errors[] = Error::RiskThresholdExceeded;
         }
 
         // Timeout
         if (false === $this->payload->validateTimeout(
-            $this->response?->getTimestamp()
+            $this->response?->timestamp
         )) {
             $this->errors[] = Error::Timeout;
         }
 
-        $this->errors = array_unique($this->errors);
-    }
-
-    /**
-     * Get payload
-     */
-    public function getPayload(): Payload
-    {
-        return $this->payload;
-    }
-
-    /**
-     * Get response
-     */
-    public function getResponse(): ?Response
-    {
-        return $this->response;
+        $this->errors = array_values(
+            array_unique($this->errors, SORT_REGULAR)
+        );
     }
 
     /**
@@ -86,15 +72,5 @@ class Result
     public function isValid(): bool
     {
         return empty($this->errors);
-    }
-
-    /**
-     * Get errors
-     *
-     * @return array<Error>
-     */
-    public function getErrors(): array
-    {
-        return $this->errors;
     }
 }

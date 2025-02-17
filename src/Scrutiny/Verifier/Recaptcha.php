@@ -14,15 +14,12 @@ use DecodeLabs\Scrutiny\Response;
 
 class Recaptcha extends SiteVerify
 {
-    protected const VerifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
-    protected const ApiUrl = 'https://www.google.com/recaptcha/api.js';
-    protected const ClientKeyName = 'g-recaptcha';
-    protected const ResponseFieldName = 'g-recaptcha-response';
+    protected const string VerifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
+    protected const string ApiUrl = 'https://www.google.com/recaptcha/api.js';
+    protected const string ClientKeyName = 'g-recaptcha';
+    protected const string ResponseFieldName = 'g-recaptcha-response';
 
-    public function getName(): string
-    {
-        return 'Recaptcha';
-    }
+    public string $name { get => 'Recaptcha'; }
 
     protected function createResponse(
         array $data

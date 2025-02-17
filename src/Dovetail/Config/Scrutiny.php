@@ -42,11 +42,13 @@ class Scrutiny implements Config, ConfigInterface
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     public function getSettingsFor(
         string $verifierName
     ): array {
-        return $this->data->{$verifierName}->toArray();
+        /** @var array<string,mixed> */
+        $output = $this->data->__get($verifierName)->toArray();
+        return $output;
     }
 }

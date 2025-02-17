@@ -14,15 +14,12 @@ use DecodeLabs\Scrutiny\Response;
 
 class HCaptcha extends SiteVerify
 {
-    protected const VerifyUrl = 'https://api.hcaptcha.com/siteverify';
-    protected const ApiUrl = 'https://hcaptcha.com/1/api.js';
-    protected const ClientKeyName = 'h-captcha';
-    protected const ResponseFieldName = 'h-captcha-response';
+    protected const string VerifyUrl = 'https://api.hcaptcha.com/siteverify';
+    protected const string ApiUrl = 'https://hcaptcha.com/1/api.js';
+    protected const string ClientKeyName = 'h-captcha';
+    protected const string ResponseFieldName = 'h-captcha-response';
 
-    public function getName(): string
-    {
-        return 'HCaptcha';
-    }
+    public string $name { get => 'HCaptcha'; }
 
     protected function createResponse(
         array $data
