@@ -26,15 +26,15 @@ class Recaptcha extends SiteVerify
     ): Response {
         $score = null;
 
-        if (null !== ($rawScore = Coercion::toFloatOrNull($data['score'] ?? null))) {
+        if (null !== ($rawScore = Coercion::tryFloat($data['score'] ?? null))) {
             $score = 1 - min(1, max(0, $rawScore));
         }
 
         return new Response(
-            hostName: Coercion::toStringOrNull($data['hostname'] ?? null),
-            action: Coercion::toStringOrNull($data['action'] ?? null),
-            timestamp: Coercion::toDateTimeOrNull(
-                Coercion::toStringOrNull($data['challenge_ts'] ?? null)
+            hostName: Coercion::tryString($data['hostname'] ?? null),
+            action: Coercion::tryString($data['action'] ?? null),
+            timestamp: Coercion::tryDateTime(
+                Coercion::tryString($data['challenge_ts'] ?? null)
             ),
             score: $score,
             rawScore: $rawScore,

@@ -93,15 +93,15 @@ class Payload
         $ips = '';
 
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips .= Coercion::toString($_SERVER['HTTP_X_FORWARDED_FOR']) . ',';
+            $ips .= Coercion::asString($_SERVER['HTTP_X_FORWARDED_FOR']) . ',';
         }
 
         if (isset($_SERVER['REMOTE_ADDR'])) {
-            $ips .= Coercion::toString($_SERVER['REMOTE_ADDR']) . ',';
+            $ips .= Coercion::asString($_SERVER['REMOTE_ADDR']) . ',';
         }
 
         if (isset($_SERVER['HTTP_CLIENT_IP'])) {
-            $ips .= Coercion::toString($_SERVER['HTTP_CLIENT_IP']) . ',';
+            $ips .= Coercion::asString($_SERVER['HTTP_CLIENT_IP']) . ',';
         }
 
         $parts = explode(',', rtrim($ips, ','));
