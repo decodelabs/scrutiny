@@ -127,7 +127,7 @@ abstract class SiteVerify implements Verifier
         if (!($data['success'] ?? false)) {
             $errors = [];
 
-            foreach (Coercion::toArray($data['error-codes'] ?? []) as $code) {
+            foreach (Coercion::asArray($data['error-codes'] ?? []) as $code) {
                 $errors[] = match ($code) {
                     'missing-input-response' => Error::InvalidPayload,
                     'invalid-input-response' => Error::InvalidInput,
