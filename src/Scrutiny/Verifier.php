@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Scrutiny;
 
-use DecodeLabs\Tagged\ViewAssetContainer;
+use DecodeLabs\Tagged\Component\Scrutiny as ScrutinyComponent;
 
 interface Verifier
 {
@@ -25,9 +25,9 @@ interface Verifier
      */
     public array $componentData { get; }
 
-    public function prepareInlineViewAssets(
-        ?string $nonce = null
-    ): ViewAssetContainer;
+    public function prepareAssets(
+        ScrutinyComponent $component
+    ): void;
 
     public function verify(
         Payload $payload

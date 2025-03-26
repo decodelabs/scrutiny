@@ -17,9 +17,8 @@ use DecodeLabs\Scrutiny\Payload;
 use DecodeLabs\Scrutiny\Response;
 use DecodeLabs\Scrutiny\Result;
 use DecodeLabs\Scrutiny\Verifier;
-use DecodeLabs\Tagged\Asset\RemoteScript;
+use DecodeLabs\Tagged\Component\Scrutiny as ScrutinyComponent;
 use DecodeLabs\Tagged\Element;
-use DecodeLabs\Tagged\ViewAssetContainer;
 use SensitiveParameter;
 
 abstract class SiteVerify implements Verifier
@@ -55,29 +54,24 @@ abstract class SiteVerify implements Verifier
     }
 
     /**
-     * Get assets for inline render
+     * Prepare component
      */
-    public function prepareInlineViewAssets(
-        ?string $nonce = null
-    ): ViewAssetContainer {
-        $output = new ViewAssetContainer();
+    public function prepareAssets(
+        ScrutinyComponent $component
+    ): void {
+        $component->addClass(static::ClientKeyName);
+        $component->setDataAttribute('sitekey', $this->siteKey);
 
-        $output->addHeadJs(new RemoteScript(
+        $component->addScript(
+            key: 'api',
             priority: 10,
-            src: static::ApiUrl,
             attributes: [
-                'nonce' => $nonce,
+                'src' => static::ApiUrl,
+                'nonce' => $component->nonce,
                 'async' => true,
                 'defer' => true
             ]
-        ));
-
-        $output->setContent(new Element('div', null, [
-            'class' => static::ClientKeyName,
-            'data-sitekey' => $this->siteKey
-        ]));
-
-        return $output;
+        );
     }
 
     /**

@@ -17,12 +17,11 @@
         "decodelabs/dictum": "^0.6.9",
         "decodelabs/exceptional": "^0.5.3",
         "decodelabs/glitch-support": "^0.5.1",
+        "decodelabs/horizon": "^0.2.1",
         "decodelabs/hydro": "^0.1.6",
         "decodelabs/slingshot": "^0.1.12",
-        "decodelabs/tagged": "^0.17",
-        "decodelabs/veneer": "^0.12.3",
-
-        "symfony/polyfill-php82": "^1.31"
+        "decodelabs/tagged": "^0.18",
+        "decodelabs/veneer": "^0.12.3"
     },
     "require-dev": {
         "decodelabs/phpstan-decodelabs": "^0.7",
@@ -33,7 +32,8 @@
             "DecodeLabs\\Scrutiny\\": "src/Scrutiny"
         },
         "classmap": [
-            "src/Dovetail/"
+            "src/Dovetail/",
+            "src/Tagged/"
         ],
         "files": [
             "src/Scrutiny/Context.php"
@@ -41,7 +41,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-develop": "0.3.x-dev"
+            "dev-develop": "0.4.x-dev"
         }
     },
     "config": {
