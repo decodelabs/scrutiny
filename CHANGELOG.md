@@ -1,3 +1,7 @@
+## v0.4.0 (2025-03-26)
+* Moved rendering to Tagged Component
+* Removed render functions from Context
+
 ## v0.3.2 (2025-03-25)
 * Upgraded Tagged dependency
 

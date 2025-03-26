@@ -15,7 +15,7 @@ use DecodeLabs\Scrutiny\Error;
 use DecodeLabs\Scrutiny\Payload;
 use DecodeLabs\Scrutiny\Result;
 use DecodeLabs\Scrutiny\Verifier;
-use DecodeLabs\Tagged\ViewAssetContainer;
+use DecodeLabs\Tagged\Component\Scrutiny as ScrutinyComponent;
 
 class Compound implements Verifier
 {
@@ -75,14 +75,14 @@ class Compound implements Verifier
         }
     }
 
-    public function prepareInlineViewAssets(
-        ?string $nonce = null
-    ): ViewAssetContainer {
-        if (!isset($this->verifiers[0])) {
-            return new ViewAssetContainer();
+    public function prepareAssets(
+        ScrutinyComponent $component
+    ): void {
+        if(!isset($this->verifiers[0])) {
+            return;
         }
 
-        return $this->verifiers[0]->prepareInlineViewAssets($nonce);
+        $this->verifiers[0]->prepareAssets($component);
     }
 
     public function verify(

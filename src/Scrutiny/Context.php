@@ -115,35 +115,6 @@ class Context
 
 
     /**
-     * Render inline
-     */
-    public function renderInline(
-        ?string $verifierName = null,
-        ?string $nonce = null
-    ): ?Markup {
-        if (!$verifier = $this->tryLoadVerifier($verifierName)) {
-            return null;
-        }
-
-        $assets = $verifier->prepareInlineViewAssets($nonce);
-        return $assets->renderInline();
-    }
-
-    /**
-     * Render component
-     */
-    public function render(
-        ?string $verifierName = null
-    ): ?Element {
-        if (!$verifier = $this->tryLoadVerifier($verifierName)) {
-            return null;
-        }
-
-        $verifierName = (new ReflectionClass($verifier))->getShortName();
-        return $this->getRenderer($verifierName)->render($verifier);
-    }
-
-    /**
      * Register renderer
      */
     public function registerRenderer(
