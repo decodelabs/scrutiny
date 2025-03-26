@@ -19,7 +19,7 @@
         "decodelabs/glitch-support": "^0.5.1",
         "decodelabs/hydro": "^0.1.6",
         "decodelabs/slingshot": "^0.1.12",
-        "decodelabs/tagged": "^0.16",
+        "decodelabs/tagged": "^0.17",
         "decodelabs/veneer": "^0.12.3",
 
         "symfony/polyfill-php82": "^1.31"
