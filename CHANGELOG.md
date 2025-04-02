@@ -1,3 +1,7 @@
+## v0.4.1 (2025-04-02)
+* Upgraded Horizon dependency
+* Upgraded Tagged dependency
+
 ## v0.4.0 (2025-03-26)
 * Moved rendering to Tagged Component
 * Removed render functions from Context
