@@ -1,3 +1,6 @@
+## v0.4.2 (2025-04-03)
+* Upgraded Horizon dependency
+
 ## v0.4.1 (2025-04-02)
 * Upgraded Horizon dependency
 * Upgraded Tagged dependency
