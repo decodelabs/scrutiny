@@ -1,3 +1,6 @@
+## v0.4.3 (2025-04-09)
+* Upgraded Slingshot dependency
+
 ## v0.4.2 (2025-04-03)
 * Upgraded Horizon dependency
 
