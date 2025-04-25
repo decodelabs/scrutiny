@@ -20,7 +20,7 @@
         "decodelabs/horizon": "^0.4",
         "decodelabs/hydro": "^0.1.6",
         "decodelabs/slingshot": "^0.2",
-        "decodelabs/tagged": "^0.19",
+        "decodelabs/tagged": "^0.20",
         "decodelabs/veneer": "^0.12.3"
     },
     "require-dev": {

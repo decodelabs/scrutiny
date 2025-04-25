@@ -1,3 +1,6 @@
+## v0.4.4 (2025-04-25)
+* Upgraded Tagged dependency
+
 ## v0.4.3 (2025-04-09)
 * Upgraded Slingshot dependency
 

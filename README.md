@@ -11,8 +11,6 @@
 
 Scrutiny provides a simple, standardised interface for checking your users are human. It supports a range of different verification methods and can be easily extended to support more.
 
-_Get news and updates on the [DecodeLabs blog](https://blog.decodelabs.com)._
-
 ---
 
 ## Installation
