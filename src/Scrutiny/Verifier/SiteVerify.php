@@ -10,8 +10,8 @@ declare(strict_types=1);
 namespace DecodeLabs\Scrutiny\Verifier;
 
 use DecodeLabs\Coercion;
-use DecodeLabs\Glitch\Attribute\SensitiveProperty;
 use DecodeLabs\Hydro;
+use DecodeLabs\Nuance\SensitiveProperty;
 use DecodeLabs\Scrutiny\Error;
 use DecodeLabs\Scrutiny\Payload;
 use DecodeLabs\Scrutiny\Response;
