@@ -13,11 +13,11 @@ use DateTimeInterface;
 
 class Response
 {
-    protected(set) ?int $timestamp;
-    protected(set) ?string $hostName;
-    protected(set) ?string $action;
-    protected(set) ?float $score;
-    protected(set) int|float|string|null $rawScore;
+    public protected(set) ?int $timestamp;
+    public protected(set) ?string $hostName;
+    public protected(set) ?string $action;
+    public protected(set) ?float $score;
+    public protected(set) int|float|string|null $rawScore;
 
     public function __construct(
         ?string $hostName = null,

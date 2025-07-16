@@ -15,7 +15,7 @@ use Throwable;
 
 class Payload
 {
-    protected(set) Ip $ip {
+    public protected(set) Ip $ip {
         get {
             if (!isset($this->ip)) {
                 $this->ip = $this->extrapolateIp();
@@ -25,19 +25,19 @@ class Payload
         }
     }
 
-    protected(set) ?string $verifierName;
+    public protected(set) ?string $verifierName;
 
     /**
      * @var array<string,mixed>
      */
-    protected(set) array $values = [];
+    public protected(set) array $values = [];
 
     /**
      * @var array<string>
      */
-    protected(set) array $hostNames = [];
+    public protected(set) array $hostNames = [];
 
-    protected(set) ?string $action {
+    public protected(set) ?string $action {
         get => $this->action ?? 'default';
     }
 
@@ -76,7 +76,7 @@ class Payload
 
         $this->verifierName = $verifierName;
 
-        if($ip !== null) {
+        if ($ip !== null) {
             $this->ip = $ip;
         }
 

@@ -17,10 +17,7 @@ use DecodeLabs\Scrutiny;
 use DecodeLabs\Scrutiny\Renderer\Custom as CustomRenderer;
 use DecodeLabs\Scrutiny\Renderer\Generic as GenericRenderer;
 use DecodeLabs\Slingshot;
-use DecodeLabs\Tagged\Element;
-use DecodeLabs\Tagged\Markup;
 use DecodeLabs\Veneer;
-use ReflectionClass;
 
 class Context
 {

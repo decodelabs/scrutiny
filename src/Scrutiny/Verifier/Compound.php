@@ -78,7 +78,7 @@ class Compound implements Verifier
     public function prepareAssets(
         ScrutinyComponent $component
     ): void {
-        if(!isset($this->verifiers[0])) {
+        if (!isset($this->verifiers[0])) {
             return;
         }
 

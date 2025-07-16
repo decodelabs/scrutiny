@@ -11,13 +11,13 @@ namespace DecodeLabs\Scrutiny;
 
 class Result
 {
-    protected(set) Payload $payload;
-    protected(set) ?Response $response = null;
+    public protected(set) Payload $payload;
+    public protected(set) ?Response $response = null;
 
     /**
      * @var list<Error>
      */
-    protected(set) array $errors = [];
+    public protected(set) array $errors = [];
 
     /**
      * Init with payload

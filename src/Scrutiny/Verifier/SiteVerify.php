@@ -18,7 +18,6 @@ use DecodeLabs\Scrutiny\Response;
 use DecodeLabs\Scrutiny\Result;
 use DecodeLabs\Scrutiny\Verifier;
 use DecodeLabs\Tagged\Component\Scrutiny as ScrutinyComponent;
-use DecodeLabs\Tagged\Element;
 use SensitiveParameter;
 
 abstract class SiteVerify implements Verifier
@@ -36,7 +35,7 @@ abstract class SiteVerify implements Verifier
         ];
     }
 
-    protected(set) string $siteKey;
+    public protected(set) string $siteKey;
 
     #[SensitiveProperty]
     protected string $secret;

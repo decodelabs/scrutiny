@@ -24,7 +24,6 @@ use DecodeLabs\Tagged\Markup;
 use DecodeLabs\Tagged\RenderableTrait;
 use DecodeLabs\Tagged\Tag;
 use ReflectionClass;
-use Stringable;
 
 class Scrutiny extends Tag implements
     Component,
@@ -39,8 +38,8 @@ class Scrutiny extends Tag implements
 
     public ?Markup $content = null;
 
-    protected(set) ?string $nonce = null;
-    protected(set) Verifier $verifier;
+    public protected(set) ?string $nonce = null;
+    public protected(set) Verifier $verifier;
 
     /**
      * Generate image
@@ -56,7 +55,7 @@ class Scrutiny extends Tag implements
     ) {
         parent::__construct('div', $attributes);
 
-        if(!$verifier instanceof Verifier) {
+        if (!$verifier instanceof Verifier) {
             $verifier = ScrutinyLib::loadVerifier(
                 name: $verifier,
                 settings: $settings
@@ -81,7 +80,7 @@ class Scrutiny extends Tag implements
     public function renderInline(
         bool $pretty = false
     ): ?Buffer {
-        return ContentCollection::normalize(function() use($pretty) {
+        return ContentCollection::normalize(function () use ($pretty) {
             $inlineTag = $this->renderInlineTag($pretty);
 
             yield from $this->getLinks();
