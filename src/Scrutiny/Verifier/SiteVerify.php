@@ -40,21 +40,16 @@ abstract class SiteVerify implements Verifier
     #[SensitiveProperty]
     protected string $secret;
 
-    /**
-     * Init with config
-     */
     public function __construct(
         string $siteKey,
         #[SensitiveParameter]
-        string $secret
+        string $secret,
+        protected Hydro $hydro
     ) {
         $this->siteKey = $siteKey;
         $this->secret = $secret;
     }
 
-    /**
-     * Prepare component
-     */
     public function prepareAssets(
         ScrutinyComponent $component
     ): void {
@@ -73,9 +68,6 @@ abstract class SiteVerify implements Verifier
         );
     }
 
-    /**
-     * Verify payload
-     */
     public function verify(
         Payload $payload
     ): Result {
@@ -92,7 +84,7 @@ abstract class SiteVerify implements Verifier
             );
         }
 
-        $httpResponse = Hydro::request('POST', [
+        $httpResponse = $this->hydro->request('POST', [
             'url' => static::VerifyUrl,
             'form_params' => [
                 'secret' => $this->secret,

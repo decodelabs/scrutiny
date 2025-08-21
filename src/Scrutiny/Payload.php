@@ -11,6 +11,7 @@ namespace DecodeLabs\Scrutiny;
 
 use DecodeLabs\Coercion;
 use DecodeLabs\Compass\Ip;
+use DecodeLabs\Scrutiny;
 use Throwable;
 
 class Payload
@@ -56,8 +57,6 @@ class Payload
     }
 
     /**
-     * Init with values
-     *
      * @param array<string,mixed> $values
      * @param array<string> $hostNames
      */
@@ -118,27 +117,17 @@ class Payload
         return new Ip('0.0.0.0');
     }
 
-
-    /**
-     * Get value
-     */
     public function getValue(
         string $name
     ): mixed {
         return $this->values[$name] ?? null;
     }
 
-    /**
-     * Has host names
-     */
     public function hasHostNames(): bool
     {
         return !empty($this->hostNames);
     }
 
-    /**
-     * Has host name
-     */
     public function validateHostName(
         ?string $hostName
     ): ?bool {
@@ -149,12 +138,9 @@ class Payload
             return null;
         }
 
-        return in_array(Context::prepareHostName($hostName), $this->hostNames);
+        return in_array(Scrutiny::prepareHostName($hostName), $this->hostNames);
     }
 
-    /**
-     * Validate action
-     */
     public function validateAction(
         ?string $action
     ): ?bool {
@@ -168,9 +154,6 @@ class Payload
         return $action === $this->action;
     }
 
-    /**
-     * Validate timeout
-     */
     public function validateTimeout(
         ?int $timestamp
     ): ?bool {
@@ -184,9 +167,6 @@ class Payload
         return time() - $timestamp <= $this->timeout;
     }
 
-    /**
-     * Validate score threshold
-     */
     public function validateScoreThreshold(
         ?float $score
     ): ?bool {

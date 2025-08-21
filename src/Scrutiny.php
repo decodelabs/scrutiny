@@ -7,20 +7,26 @@
 
 declare(strict_types=1);
 
-namespace DecodeLabs\Scrutiny;
+namespace DecodeLabs;
 
 use Closure;
-use DecodeLabs\Dovetail;
 use DecodeLabs\Dovetail\Config\Scrutiny as ScrutinyConfig;
-use DecodeLabs\Exceptional;
-use DecodeLabs\Scrutiny;
+use DecodeLabs\Kingdom\ContainerAdapter;
+use DecodeLabs\Kingdom\Service;
+use DecodeLabs\Kingdom\ServiceTrait;
+use DecodeLabs\Scrutiny\Config;
+use DecodeLabs\Scrutiny\Error;
+use DecodeLabs\Scrutiny\Payload;
+use DecodeLabs\Scrutiny\Renderer;
 use DecodeLabs\Scrutiny\Renderer\Custom as CustomRenderer;
 use DecodeLabs\Scrutiny\Renderer\Generic as GenericRenderer;
-use DecodeLabs\Slingshot;
-use DecodeLabs\Veneer;
+use DecodeLabs\Scrutiny\Result;
+use DecodeLabs\Scrutiny\Verifier;
 
-class Context
+class Scrutiny implements Service
 {
+    use ServiceTrait;
+
     /**
      * @var array<string>
      */
@@ -33,41 +39,34 @@ class Context
      */
     protected array $renderers = [];
 
-    /**
-     * Set config
-     */
-    public function setConfig(
-        ?Config $config
-    ): void {
+    public static function provideService(
+        ContainerAdapter $container
+    ): static {
+        if (
+            !$container->has(Config::class) &&
+            class_exists(Dovetail::class)
+        ) {
+            $container->setType(Config::class, ScrutinyConfig::class);
+        }
+
+        return $container->getOrCreate(static::class);
+    }
+
+    public function __construct(
+        ?Config $config = null
+    ) {
         $this->config = $config;
     }
 
     /**
-     * Get config
-     */
-    public function getConfig(): ?Config
-    {
-        if (
-            $this->config === null &&
-            class_exists(Dovetail::class)
-        ) {
-            $this->config = ScrutinyConfig::load();
-        }
-
-        return $this->config;
-    }
-
-    /**
-     * Load verifier
-     *
-     * @param array<string, mixed> $settings
+     * @param array<string,mixed> $settings
      */
     public function loadVerifier(
         ?string $name = null,
         ?array $settings = null
     ): Verifier {
         if (!$verifier = $this->tryLoadVerifier($name, $settings)) {
-            throw Exceptional::NotFound(
+            throw Exceptional::{'./Scrutiny/NotFound'}(
                 message: 'Verifier ' . $name . ' is not enabled'
             );
         }
@@ -76,18 +75,14 @@ class Context
     }
 
     /**
-     * Try load verifier
-     *
-     * @param array<string, mixed> $settings
+     * @param array<string,mixed> $settings
      */
     public function tryLoadVerifier(
         ?string $name = null,
         ?array $settings = null
     ): ?Verifier {
-        $config = $this->getConfig();
-
         if ($name === null) {
-            $name = $config?->getFirstEnabledVerifier();
+            $name = $this->config?->getFirstEnabledVerifier();
 
             if ($name === null) {
                 return null;
@@ -95,7 +90,7 @@ class Context
         }
 
         if ($settings === null) {
-            $settings = $config?->getSettingsFor($name) ?? [];
+            $settings = $this->config?->getSettingsFor($name) ?? [];
         }
 
         if (
@@ -111,9 +106,6 @@ class Context
     }
 
 
-    /**
-     * Register renderer
-     */
     public function registerRenderer(
         string $verifierName,
         Renderer $renderer
@@ -121,9 +113,6 @@ class Context
         $this->renderers[$verifierName] = $renderer;
     }
 
-    /**
-     * Register custom renderer
-     */
     public function registerCustomRenderer(
         string $verifierName,
         Closure $renderer,
@@ -131,18 +120,12 @@ class Context
         $this->registerRenderer($verifierName, new CustomRenderer($renderer));
     }
 
-    /**
-     * Register default renderer
-     */
     public function registerDefaultRenderer(
         Renderer $renderer
     ): void {
         $this->registerRenderer('Default', $renderer);
     }
 
-    /**
-     * Get renderer
-     */
     public function getRenderer(
         string $verifierName
     ): Renderer {
@@ -152,9 +135,6 @@ class Context
             new GenericRenderer();
     }
 
-    /**
-     * Remove renderer
-     */
     public function removeRenderer(
         string $verifierName
     ): void {
@@ -163,8 +143,6 @@ class Context
 
 
     /**
-     * Create payload and verify
-     *
      * @param array<string, mixed> $values
      */
     public function verify(
@@ -185,9 +163,6 @@ class Context
         );
     }
 
-    /**
-     * Verify prepared payload
-     */
     public function verifyPayload(
         Payload $payload
     ): Result {
@@ -206,9 +181,6 @@ class Context
     }
 
 
-    /**
-     * Add host name
-     */
     public function addHostNames(
         string ...$hostNames
     ): void {
@@ -221,9 +193,6 @@ class Context
         }
     }
 
-    /**
-     * Remove host name
-     */
     public function removeHostNames(
         string ...$hostNames
     ): void {
@@ -238,8 +207,6 @@ class Context
     }
 
     /**
-     * Get host names
-     *
      * @return array<string>
      */
     public function getHostNames(): array
@@ -247,9 +214,6 @@ class Context
         return $this->hostNames;
     }
 
-    /**
-     * Prepare host name
-     */
     public static function prepareHostName(
         string $hostName
     ): string {
@@ -260,8 +224,6 @@ class Context
 
 
     /**
-     * Create payload
-     *
      * @param array<string, mixed> $values
      */
     public function createPayload(
@@ -281,9 +243,3 @@ class Context
         );
     }
 }
-
-// Register the Veneer facade
-Veneer\Manager::getGlobalManager()->register(
-    Context::class,
-    Scrutiny::class
-);

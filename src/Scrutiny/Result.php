@@ -20,8 +20,6 @@ class Result
     public protected(set) array $errors = [];
 
     /**
-     * Init with payload
-     *
      * @param list<Error> $errors
      */
     public function __construct(
@@ -66,9 +64,6 @@ class Result
         );
     }
 
-    /**
-     * Is valid
-     */
     public function isValid(): bool
     {
         return empty($this->errors);

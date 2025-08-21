@@ -15,6 +15,7 @@ use DecodeLabs\Horizon\Property\LinkCollection;
 use DecodeLabs\Horizon\Property\LinkCollectionTrait;
 use DecodeLabs\Horizon\Property\ScriptCollection;
 use DecodeLabs\Horizon\Property\ScriptCollectionTrait;
+use DecodeLabs\Monarch;
 use DecodeLabs\Scrutiny as ScrutinyLib;
 use DecodeLabs\Scrutiny\Verifier;
 use DecodeLabs\Tagged\Buffer;
@@ -42,8 +43,6 @@ class Scrutiny extends Tag implements
     public protected(set) Verifier $verifier;
 
     /**
-     * Generate image
-     *
      * @param array<string,mixed>|null $attributes
      * @param array<string,mixed>|null $settings
      */
@@ -56,7 +55,9 @@ class Scrutiny extends Tag implements
         parent::__construct('div', $attributes);
 
         if (!$verifier instanceof Verifier) {
-            $verifier = ScrutinyLib::loadVerifier(
+            $scrutiny = Monarch::getService(ScrutinyLib::class);
+
+            $verifier = $scrutiny->loadVerifier(
                 name: $verifier,
                 settings: $settings
             );
@@ -71,7 +72,8 @@ class Scrutiny extends Tag implements
         bool $pretty = false
     ): ?Buffer {
         $verifierName = (new ReflectionClass($this->verifier))->getShortName();
-        $renderer = ScrutinyLib::getRenderer($verifierName);
+        $scrutiny = Monarch::getService(ScrutinyLib::class);
+        $renderer = $scrutiny->getRenderer($verifierName);
         $output = $renderer->render($this->verifier);
         $output->setAttributes($this->getAttributes());
         return $output->render($pretty);

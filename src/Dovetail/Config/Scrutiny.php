@@ -23,7 +23,7 @@ class Scrutiny implements Config, ConfigInterface
             'VerifierName' => [
                 'enabled' => false,
                 'siteKey' => '--siteKey--',
-                'secret' => "{{envString('VERIFIER_SECRET')}}",
+                'secret' => "{{Env::asString('VERIFIER_SECRET')}}",
             ]
         ];
     }

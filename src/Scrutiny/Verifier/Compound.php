@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace DecodeLabs\Scrutiny\Verifier;
 
 use DecodeLabs\Dictum;
-use DecodeLabs\Scrutiny\Context;
+use DecodeLabs\Scrutiny;
 use DecodeLabs\Scrutiny\Error;
 use DecodeLabs\Scrutiny\Payload;
 use DecodeLabs\Scrutiny\Result;
@@ -60,11 +60,11 @@ class Compound implements Verifier
      */
     public function __construct(
         array $verifiers,
-        Context $context
+        Scrutiny $service
     ) {
         foreach ($verifiers as $verifier) {
             if (is_string($verifier)) {
-                $verifier = $context->tryLoadVerifier($verifier);
+                $verifier = $service->tryLoadVerifier($verifier);
             }
 
             if (!$verifier instanceof Verifier) {
