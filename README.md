@@ -15,6 +15,8 @@ Scrutiny provides a simple, standardised interface for checking your users are h
 
 ## Installation
 
+This package requires PHP 8.4 or higher.
+
 Install via Composer:
 
 ```bash
