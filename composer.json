@@ -20,7 +20,7 @@
         "decodelabs/hydro": "^0.2",
         "decodelabs/kingdom": "^0.2",
         "decodelabs/monarch": "^0.2.1",
-        "decodelabs/nuance": "^0.1.9",
+        "decodelabs/nuance": "^0.2",
         "decodelabs/slingshot": "^0.3",
         "decodelabs/tagged": "^0.21"
     },
