@@ -2,7 +2,7 @@
     "name": "decodelabs/scrutiny",
     "description": "Unified human check controls",
     "type": "library",
-    "keywords": [],
+    "keywords": [ ],
     "license": "MIT",
     "authors": [
         {
@@ -27,7 +27,7 @@
         "decodelabs/tagged": "^0.21"
     },
     "require-dev": {
-        "decodelabs/chorus": "^0.1",
+        "decodelabs/chorus": ">0",
         "decodelabs/dovetail": "^0.3.1",
         "decodelabs/phpstan-decodelabs": "^0.7"
     },
